@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html ng-app="employeeApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Entry System</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3e5f5;
+      padding: 30px;
+    }
+    .container {
+      background: white;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #87337b;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #87337b;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a84e9a;
+    }
+    .output {
+      margin-top: 30px;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body ng-controller="employeeCtrl">
+
+  <div class="container">
+    <h2>Employee Entry Form</h2>
+    
+    <label>Full Name:</label>
+    <input type="text" ng-model="employee.name" placeholder="Enter full name">
+
+    <label>Date of Birth:</label>
+    <input type="date" ng-model="employee.dob">
+
+    <label>Department:</label>
+    <input type="text" ng-model="employee.dept" placeholder="e.g. IT, HR">
+
+    <label>Salary:</label>
+    <input type="number" ng-model="employee.salary" placeholder="e.g. 50000">
+
+    <button ng-click="submit()">Submit</button>
+
+    <div class="output" ng-if="submitted">
+      <h3>{{message}}</h3>
+      <p><strong>Name:</strong> {{employee.name}}</p>
+      <p><strong>DOB:</strong> {{employee.dob}}</p>
+      <p><strong>Department:</strong> {{employee.dept}}</p>
+      <p><strong>Salary:</strong> ₹{{employee.salary}}</p>
+    </div>
+  </div>
+
+  <script>
+    var app = angular.module("employeeApp", []);
+    app.controller("employeeCtrl", function($scope, $http) {
+      $scope.employee = {};
+      $scope.submitted = false;
+      $scope.message = "";
+
+      $scope.submit = function() {
+        if ($scope.employee.name && $scope.employee.dob && $scope.employee.dept && $scope.employee.salary) {
+          $http.post("http://localhost/employee-system/insert.php", $scope.employee)
+            .then(function(response) {
+              $scope.message = response.data.message;
+              $scope.submitted = true;
+            }, function(error) {
+              $scope.message = "Error saving data.";
+              console.log(error);
+            });
+        } else {
+          alert("Please fill in all fields!");
+        }
+      };
+    });
+  </script>
+
+</body>
+</html>
